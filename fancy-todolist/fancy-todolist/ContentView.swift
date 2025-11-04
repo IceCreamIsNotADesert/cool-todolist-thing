@@ -20,10 +20,6 @@ struct ContentView: View {
                     .imageScale(.large)
                     .foregroundStyle(.tint)
             }
-            .onAppear {
-                screenHeight = geometry.size.height
-                screenWidth = geometry.size.width
-            }
         }
     }
 }

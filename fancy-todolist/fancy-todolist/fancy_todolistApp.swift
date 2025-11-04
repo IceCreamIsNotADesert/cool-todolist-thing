@@ -16,8 +16,13 @@ struct fancy_todolistApp: App {
     @State private var windowPositionY: CGFloat?
     
     func moveAround() {
-        windowPositionX = CGFloat.random(in: 0.0...screenWidth!)
-        windowPositionY = CGFloat.random(in: 0.0...screenHeight!)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            withAnimation{
+                windowPositionX = CGFloat.random(in: 0.0...screenWidth!)
+                windowPositionY = CGFloat.random(in: 0.0...screenHeight!)
+            }
+            moveAround()
+        }
     }
     
     func dragSomethingIn() {
@@ -50,22 +55,23 @@ struct fancy_todolistApp: App {
                         NSApp.mainWindow?.standardWindowButton(.zoomButton)?.isHidden = true
                         NSApp.mainWindow?.standardWindowButton(.miniaturizeButton)?.isHidden = true
                         NSApp.mainWindow?.styleMask = .borderless
+                        NSApp.mainWindow?.setFrameOrigin(NSPoint(x: windowPositionX ?? 0, y: windowPositionY ?? 0))
                     })
                     .onAppear {
                         screenHeight = geometry.size.height
                         screenWidth = geometry.size.width
+                        moveAround()
                     }
             }
         }
         .windowStyle(.hiddenTitleBar)
         .windowLevel(.floating)
         .windowBackgroundDragBehavior(.enabled)
-        .windowResizability(.contentSize)
+        .windowResizability(.contentMinSize)
         #if os(macOS)
         Settings{
             SettingsView()
         }
-        .windowResizability(.contentMinSize)
         #endif
     }
 }
