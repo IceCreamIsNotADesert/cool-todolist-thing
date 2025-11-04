@@ -1,0 +1,24 @@
+{
+  "originHash" : "5a16c40c9db7738fa10eca040aff574610e14677433a91e80960e8d95782f0f3",
+  "pins" : [
+    {
+      "identity" : "schwifty",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/curzel-it/Schwifty.git",
+      "state" : {
+        "revision" : "9620d6a851f4c81c458cfa37fe50d0906f872a9c",
+        "version" : "1.2.9"
+      }
+    },
+    {
+      "identity" : "swiftpersistence",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/cheesetan/SwiftPersistence",
+      "state" : {
+        "revision" : "8b13dfbeac821279cd3ca5fb9f360250325b6f81",
+        "version" : "1.1.2"
+      }
+    }
+  ],
+  "version" : 3
+}
