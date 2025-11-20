@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import Foundation
+internal import Combine
 
 @main
 struct fancy_todolistApp: App {
@@ -14,15 +16,25 @@ struct fancy_todolistApp: App {
     @State private var screenWidth: CGFloat?
     @State private var windowPositionX: CGFloat?
     @State private var windowPositionY: CGFloat?
+
+    @State private var duration: Double = 3.0
+    let timer = Timer.publish(every: 0.5, tolerance: 0.5, on: .main, in: .common).autoconnect()
+    
+    //func moveAround but it doesnt move too close to previous position (its unfinished btw cuz i was lz HAHA)
+//    @State private var newWindowPositionX: CGFloat?
+//    @State private var newWindowPositionY: CGFloat?
+//    
+//    func otherMoveAround() {
+//        newWindowPositionX = CGFloat.random(in: 0.0...screenWidth!)
+//        newWindowPositionY = CGFloat.random(in: 0.0...screenHeight!)
+//        if (newWindowPositionX! - windowPositionX! == 100 && newWindowPositionY! - windowPositionY! == 100) {
+//            windowPositionX = CGFloat.random(in: 0.0...screenWidth!)
+//        }
+//    }
     
     func moveAround() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-            withAnimation{
-                windowPositionX = CGFloat.random(in: 0.0...screenWidth!)
-                windowPositionY = CGFloat.random(in: 0.0...screenHeight!)
-            }
-            moveAround()
-        }
+        windowPositionX = CGFloat.random(in: 0.0...screenWidth!)
+        windowPositionY = CGFloat.random(in: 0.0...screenHeight!)
     }
     
     func dragSomethingIn() {
@@ -46,7 +58,7 @@ struct fancy_todolistApp: App {
     }
     
     var body: some Scene {
-        WindowGroup {
+        WindowGroup(id: "main") {
             GeometryReader { geometry in
                 ContentView()
                     .containerBackground(.clear, for: .window)
@@ -55,12 +67,18 @@ struct fancy_todolistApp: App {
                         NSApp.mainWindow?.standardWindowButton(.zoomButton)?.isHidden = true
                         NSApp.mainWindow?.standardWindowButton(.miniaturizeButton)?.isHidden = true
                         NSApp.mainWindow?.styleMask = .borderless
-                        NSApp.mainWindow?.setFrameOrigin(NSPoint(x: windowPositionX ?? 0, y: windowPositionY ?? 0))
                     })
                     .onAppear {
                         screenHeight = geometry.size.height
                         screenWidth = geometry.size.width
+                    }
+                    .onReceive(timer) { time in
                         moveAround()
+                        if (windowPositionX != nil) && (windowPositionY != nil) {
+                            withAnimation {
+                                NSApp.mainWindow?.setFrameOrigin(NSPoint(x: windowPositionX!, y: windowPositionY!))
+                            }
+                        }
                     }
             }
         }
@@ -68,10 +86,10 @@ struct fancy_todolistApp: App {
         .windowLevel(.floating)
         .windowBackgroundDragBehavior(.enabled)
         .windowResizability(.contentMinSize)
-        #if os(macOS)
+#if os(macOS)
         Settings{
             SettingsView()
         }
-        #endif
+#endif
     }
 }
